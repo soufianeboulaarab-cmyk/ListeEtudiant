@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:view>
+     <br></br>
+    <h:form>
+    <h:dataTable var="Etudiant" value="#{etudiantBean.etudiants}" border="1">
+
+        <h:column><f:facet name="header"> id </f:facet>
+            <h:inputText value="#{Etudiant.id}" disabled="#{Etudiant.locked}"/>
+        </h:column>
+
+        <h:column><f:facet name="header"> Nom </f:facet>
+            <h:inputText value="#{Etudiant.nom}" disabled="#{Etudiant.locked}"/>
+        </h:column>
+
+        <h:column><f:facet name="header"> Prenom </f:facet>
+            <h:inputText value="#{Etudiant.prenom}" disabled="#{Etudiant.locked}"/>
+        </h:column>
+
+        <h:column><f:facet name="header"> Filiere </f:facet>
+            <h:inputText value="#{Etudiant.filiere}" disabled="#{Etudiant.locked}"/>
+        </h:column>
+
+        <h:column> <f:facet name="header"> Actions </f:facet>
+        <h:commandButton value="supprimer" action="#{etudiantBean.supprimer(Etudiant)}"/>
+        <h:commandButton value="update" action="#{Etudiant.update()}"/>
+            <h:commandButton value="save" action="#{etudiantBean.modifier(Etudiant)}"/>
+        </h:column>
+    </h:dataTable>
+
+    </h:form>
+
+    <h:form>
+        <h:inputText value="#{etudiantBean.etudiant.id}"/>
+        <h:inputText value="#{etudiantBean.etudiant.nom}"/>
+        <h:inputText value="#{etudiantBean.etudiant.prenom}"/>
+        <h:inputText value="#{etudiantBean.etudiant.filiere}" />
+        <h:commandButton value="ajouter" action="#{etudiantBean.ajouter()}"/>
+    </h:form>
+</f:view>
+</html>
