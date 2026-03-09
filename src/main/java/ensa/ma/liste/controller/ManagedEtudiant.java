@@ -11,16 +11,31 @@ import java.util.List;
 
 public class ManagedEtudiant implements Serializable {
 
-    private List<Etudiant> etudiants ;
+    private List<Etudiant> etudiants;
     private String locked;
     public Etudiant etudiant = new Etudiant();
-    private EtudiantDAO etudiantDAO = new EtudiantDAO();
+    private EtudiantDAO etudiantDAO;
+    private boolean initialized = false;
 
-    public ManagedEtudiant() throws SQLException {
-        etudiants = etudiantDAO.getAll();
+    public ManagedEtudiant() {
+        // Initialisation lazy pour éviter les erreurs lors de la création du bean
+        etudiants = new ArrayList<>();
+    }
+
+    private void initializeDAO() throws SQLException {
+        if (!initialized) {
+            try {
+                this.etudiantDAO = new EtudiantDAO();
+                etudiants = etudiantDAO.getAll();
+                initialized = true;
+            } catch (RuntimeException e) {
+                throw new SQLException("Erreur lors de l'initialisation de la base de données: " + e.getMessage(), e);
+            }
+        }
     }
 
     public void ajouter() throws SQLException {
+        initializeDAO();
         Etudiant etudianttemp = new Etudiant();
 
         etudianttemp.setId(etudiant.getId());
@@ -32,16 +47,27 @@ public class ManagedEtudiant implements Serializable {
         etudiants = etudiantDAO.getAll();
     }
 
-    public void supprimer( Etudiant etudiantt) throws SQLException {
+    public void supprimer(Etudiant etudiantt) throws SQLException {
+        initializeDAO();
         etudiantDAO.deleteById(etudiantt.getId());
         etudiants = etudiantDAO.getAll();
     }
 
-    public void modifier ( Etudiant etudiantt) throws SQLException {
+    public void modifier(Etudiant etudiantt) throws SQLException {
+        initializeDAO();
         etudiantDAO.update(etudiantt);
         etudiantt.save();
     }
-    public List<Etudiant> getEtudiants() { return etudiants; }
+
+    public List<Etudiant> getEtudiants() {
+        try {
+            initializeDAO();
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de l'initialisation de la liste des étudiants: " + e.getMessage());
+            return new ArrayList<>();
+        }
+        return etudiants;
+    }
 
     public void setEtudiants(ArrayList<Etudiant> etudiants) {
         this.etudiants = etudiants;

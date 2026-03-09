@@ -9,7 +9,14 @@ public class EtudiantDAO {
 
     private String jdbcURL = "jdbc:mysql://mysql-2e43917c-soufianeboulaarab003-13d3.a.aivencloud.com:22530/etudiantsdb?sslMode=REQUIRED";
     private String jdbcUsername = "avnadmin";
-    String password = System.getenv("DB_PASSWORD");
+    private String jdbcPassword;
+
+    public EtudiantDAO() {
+        this.jdbcPassword = System.getenv("DB_PASSWORD");
+        if (this.jdbcPassword == null || this.jdbcPassword.trim().isEmpty()) {
+            throw new RuntimeException("Variable d'environnement DB_PASSWORD non définie. Veuillez la définir avant de lancer l'application.");
+        }
+    }
 
     private static final String INSERT_ETUDIANT_SQL =
             "INSERT INTO students (id, nom, prenom, filiere) VALUES (?, ?, ?, ?)";
@@ -30,7 +37,7 @@ public class EtudiantDAO {
             throw new RuntimeException("Driver MySQL non trouvé", e);
         }
 
-        return DriverManager.getConnection(jdbcURL, jdbcUsername, password);
+        return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
     }
 
     public void save(Etudiant etudiant) throws SQLException {
