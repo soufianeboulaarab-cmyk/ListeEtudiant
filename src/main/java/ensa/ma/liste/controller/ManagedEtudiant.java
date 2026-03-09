@@ -20,15 +20,21 @@ public class ManagedEtudiant implements Serializable {
     public ManagedEtudiant() {
         // Initialisation lazy pour éviter les erreurs lors de la création du bean
         etudiants = new ArrayList<>();
+        System.out.println("[ManagedEtudiant] Bean créé, initialisation lazy activée");
     }
 
     private void initializeDAO() throws SQLException {
         if (!initialized) {
+            System.out.println("[ManagedEtudiant] Initialisation du DAO...");
             try {
                 this.etudiantDAO = new EtudiantDAO();
+                System.out.println("[ManagedEtudiant] DAO créé, chargement des étudiants...");
                 etudiants = etudiantDAO.getAll();
+                System.out.println("[ManagedEtudiant] " + etudiants.size() + " étudiants chargés");
                 initialized = true;
             } catch (RuntimeException e) {
+                System.err.println("[ManagedEtudiant] Erreur lors de l'initialisation du DAO: " + e.getMessage());
+                e.printStackTrace();
                 throw new SQLException("Erreur lors de l'initialisation de la base de données: " + e.getMessage(), e);
             }
         }
@@ -63,7 +69,8 @@ public class ManagedEtudiant implements Serializable {
         try {
             initializeDAO();
         } catch (SQLException e) {
-            System.err.println("Erreur lors de l'initialisation de la liste des étudiants: " + e.getMessage());
+            System.err.println("[ManagedEtudiant] ERREUR lors de l'initialisation: " + e.getMessage());
+            e.printStackTrace();
             return new ArrayList<>();
         }
         return etudiants;
